@@ -1,24 +1,39 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
+import { main } from "@securesubstrates/pqkms";
+import "./style.css";
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+async function sendForm(form: HTMLFormElement) {
+  let formData = new FormData(form);
+  let domain_prefix = formData.get("domain") as string;
+  let email = formData.get("email") as string;
+  let password = formData.get("password") as string;
+  console.log(`FormData: ${domain_prefix} => ${email} => ${password}`);
+  await main(
+    domain_prefix,
+    email,
+    password,
+    "https://registrar.pqkms.dev:8443"
+  );
+}
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+const onSubmit = (event: Event) => {
+  event.preventDefault();
+  if (event.currentTarget) {
+    sendForm(event.currentTarget as HTMLFormElement);
+    // .then((response) => response.json())
+    // .then((data) => alert(`Response ID: ${data.id}`))
+    // .catch(() => alert("HTTP Error!"));
+  } else {
+    alert("Invalid event target for registration form");
+  }
+};
+
+const init = () => {
+  const form = document.querySelector("body > div > form");
+  if (form) {
+    form.addEventListener("submit", onSubmit);
+  } else {
+    alert(`Invalid registration test configuration`);
+  }
+};
+
+init();

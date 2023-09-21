@@ -2,12 +2,28 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
+    <title>PQKMS Front End tests</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div class="registration">
+        <h1>Registration</h1>
+        <form action="https://jsonplaceholder.typicode.com/posts">
+            <input name="domain"
+                    id="domain"
+                    placeholder="www"
+                    required />
+            <input name="email"
+                    id="email"
+                    type="email"
+                    placeholder="someone@somewhere.com"
+                    required />
+
+            <input name="password" id="password" type="password" required />
+            <button>Send</button>
+        </form>
+    </div>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
