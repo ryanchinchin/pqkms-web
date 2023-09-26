@@ -20,6 +20,9 @@ jobs:
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
 
+      - name: Upgrade packages 🔀
+        run: npm update
+
       - name: Build project
         run: npm run build
 
