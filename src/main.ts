@@ -1,4 +1,4 @@
-import { main } from "@securesubstrates/pqkms";
+import { register_user } from "@securesubstrates/pqkms";
 import "./style.css";
 
 async function sendForm(form: HTMLFormElement) {
@@ -7,7 +7,7 @@ async function sendForm(form: HTMLFormElement) {
   let email = formData.get("email") as string;
   let password = formData.get("password") as string;
   console.log(`FormData: ${domain_prefix} => ${email} => ${password}`);
-  await main(
+  await register_user(
     domain_prefix,
     email,
     password,
