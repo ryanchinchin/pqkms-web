@@ -18,7 +18,11 @@ async function sendForm(form: HTMLFormElement) {
 const onSubmit = (event: Event) => {
   event.preventDefault();
   if (event.currentTarget) {
-    sendForm(event.currentTarget as HTMLFormElement);
+    try {
+      sendForm(event.currentTarget as HTMLFormElement);
+    } catch (e) {
+      alert(`Failed to register user ${e}`);
+    }
     // .then((response) => response.json())
     // .then((data) => alert(`Response ID: ${data.id}`))
     // .catch(() => alert("HTTP Error!"));
