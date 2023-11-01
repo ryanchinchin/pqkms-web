@@ -14,6 +14,6 @@
     "vite": "^4.4.5"
   },
   "dependencies": {
-      "@securesubstrates/pqkms": "git+https://github.com/ryanchinchin/pqkms-js.git"
+      "@securesubstrates/pqkms": "file:../pqkms-js"
   }
 }
