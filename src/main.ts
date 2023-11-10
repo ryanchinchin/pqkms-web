@@ -32,7 +32,7 @@ async function sendLoginRequest(form: HTMLFormElement): Promise<string> {
   );
   let auth_inf = await login_user(project_list[0], password);
   let sk = await auth_inf.enclaveSigningKey();
-  let jwk = globalThis.crypto.subtle.exportKey("jwk", sk);
+  let jwk = await globalThis.crypto.subtle.exportKey("jwk", sk);
   return JSON.stringify(jwk);
 }
 
