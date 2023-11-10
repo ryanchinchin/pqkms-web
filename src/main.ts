@@ -5,6 +5,10 @@ import {
 } from "@securesubstrates/pqkms";
 import "./style.css";
 
+const REG_STATUS_SELECTOR: string = `body > div.registration > div.read-the-docs`;
+
+const LOGIN_STATUS_SELECTOR: string = `body > div.login > div.read-the-docs`;
+
 async function sendRegistrationRequest(form: HTMLFormElement): Promise<string> {
   let formData = new FormData(form);
   let domain_prefix = formData.get("domain") as string;
@@ -18,7 +22,7 @@ async function sendRegistrationRequest(form: HTMLFormElement): Promise<string> {
   );
 }
 
-async function sendLoginRequest(form: HTMLFormElement) {
+async function sendLoginRequest(form: HTMLFormElement): Promise<string> {
   let formData = new FormData(form);
   let email = formData.get("email") as string;
   let password = formData.get("password") as string;
@@ -26,17 +30,18 @@ async function sendLoginRequest(form: HTMLFormElement) {
     "https://registrar.pqkms.dev:8443",
     email.trim()
   );
-  login_user(project_list[0], password);
+  let auth_inf = await login_user(project_list[0], password);
+  let sk = await auth_inf.enclaveSigningKey();
+  let jwk = globalThis.crypto.subtle.exportKey("jwk", sk);
+  return JSON.stringify(jwk);
 }
 
 function regDivElement(): HTMLDivElement {
   return document.querySelector("body > div.registration") as HTMLDivElement;
 }
 
-function regStatusElement(): HTMLDivElement | null {
-  let status_element = document.querySelector(
-    "body > div.registration > div.read-the-docs"
-  ) as HTMLDivElement;
+function statusElement(selector: string): HTMLDivElement | null {
+  let status_element = document.querySelector(selector) as HTMLDivElement;
 
   if (status_element) {
     return status_element;
@@ -53,8 +58,8 @@ function regStatusElement(): HTMLDivElement | null {
   }
 }
 
-function setRegStatus(msg: string) {
-  let status = regStatusElement();
+function setStatus(selector: string, msg: string) {
+  let status = statusElement(selector);
   if (status) {
     status.innerText = msg;
   }
@@ -64,21 +69,26 @@ const doRegistration = (event: Event) => {
   event.preventDefault();
   if (event.currentTarget) {
     sendRegistrationRequest(event.currentTarget as HTMLFormElement)
-      .then(setRegStatus)
+      .then((m) => setStatus(REG_STATUS_SELECTOR, m))
       .catch((e) => {
-        setRegStatus(`Registration failed: ${e.message}`);
+        setStatus(REG_STATUS_SELECTOR, `Registration failed: ${e.message}`);
       });
   } else {
-    setRegStatus("Invalid event target for registration form");
+    setStatus(
+      REG_STATUS_SELECTOR,
+      "Invalid event target for registration form"
+    );
   }
 };
 
 const doLogin = (event: Event) => {
   event.preventDefault();
   if (event.currentTarget) {
-    sendLoginRequest(event.currentTarget as HTMLFormElement).catch((e) => {
-      alert(`Login failed: ${e}`);
-    });
+    sendLoginRequest(event.currentTarget as HTMLFormElement)
+      .then((m) => setStatus(LOGIN_STATUS_SELECTOR, m))
+      .catch((e) => {
+        alert(`Login failed: ${e}`);
+      });
   } else {
     alert("Invalid event target for registration form");
   }
